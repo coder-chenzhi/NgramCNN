@@ -135,9 +135,9 @@ def preparenel_with_vali(adj_list, kernel_width=15, max_node_num=110, cut_line1=
                 output = np.asarray(output, dtype=np.int32)
                 input_test_list.append(input)
                 output_test_list.append(output)
-    print "get train data %d" % (len(input_train_list))
-    print "get validation data: %d" % (len(input_vali_list))
-    print "get test data %d" % (len(input_test_list))
+    print("get train data %d" % (len(input_train_list)))
+    print("get validation data: %d" % (len(input_vali_list)))
+    print("get test data %d" % (len(input_test_list)))
     return (input_train_list, output_train_list, input_vali_list, output_vali_list, input_test_list, output_test_list)
 
 

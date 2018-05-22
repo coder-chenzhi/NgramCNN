@@ -60,7 +60,7 @@ if __name__ == "__main__":
     operation = int(sys.argv[2])  # 1 means preparing , 2 means training
     kernel_width = int(sys.argv[3])  # kernel width
 
-    print "Dataset: %s\nOperation: %s\nParameters:\nKernel width: %s" % (ds_name, operation, kernel_width)
+    print("Dataset: %s\nOperation: %s\nParameters:\nKernel width: %s" % (ds_name, operation, kernel_width))
 
     output_dir = "bufferdata"
     data_dir = "kdd_datasets"
@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
         net_all_list = go(load_data_to_list, graph_data_array, cpu_parallel_num)
         # net_all_list = load_data_to_list(graph_data_array)
-        print "graph num is %d" % (len(net_all_list))
+        print("graph num is %d" % (len(net_all_list)))
         all_degree = 0
         max_edge_num = 0
         min_edge_num = 10000
@@ -122,29 +122,29 @@ if __name__ == "__main__":
         max_label_known += 1
         end = time.time()
 
-        print "max node: %d" % max_node_known
-        print "max label: %d" % max_label_known
-        print "max degree: %s" % max_degree
-        print "min degree: %s" % min_degree
-        print "avg degree: %s" % (total_degree / (len(net_list)))
-        print "max node: %d" % max_node_num
-        print "min node: %d" % min_node_num
-        print "avg node: %d" % (total_node_num / len(net_list))
-        print "max edge: %d" % max_edge_num
-        print "min edge: %d" % min_edge_num
-        print "avg edge: %d" % (total_edge_num / len(net_list))
-        print "org graph number %d" % (len(net_list))
-        print "extend graph number %d" % (len(other_list))
-        print "start writing disk"
+        print("max node: %d" % max_node_known)
+        print("max label: %d" % max_label_known)
+        print("max degree: %s" % max_degree)
+        print("min degree: %s" % min_degree)
+        print("avg degree: %s" % (total_degree / (len(net_list))))
+        print("max node: %d" % max_node_num)
+        print("min node: %d" % min_node_num)
+        print("avg node: %d" % (total_node_num / len(net_list)))
+        print("max edge: %d" % max_edge_num)
+        print("min edge: %d" % min_edge_num)
+        print("avg edge: %d" % (total_edge_num / len(net_list)))
+        print("org graph number %d" % (len(net_list)))
+        print("extend graph number %d" % (len(other_list)))
+        print("start writing disk")
         with open(output_dir + "/%s_kwidth_%s" % (ds_name, kernel_width), 'w') as f:
             pickle.dump((net_list, max_node_known, max_label_known), f)
-        print "done"
+        print("done")
 
     elif operation == 2:
 
         with open(output_dir + "/%s_kwidth_%s" % (ds_name, kernel_width), 'r') as f:
             adj_list, max_node_known, max_label_known = pickle.load(f)
-        print "load %d" % (len(adj_list))
+        print("load %d" % (len(adj_list)))
         batch_size = int(sys.argv[4])
         kernel_num = int(sys.argv[5])
         kernel_size_other = int(sys.argv[6])
@@ -156,8 +156,8 @@ if __name__ == "__main__":
         alval = []
         altim = []
 
-        print "Start Train with Parameters:\nKernel width: %s\nKernel num: %s\nOther Kernel size: %s\nOther Kernel num: %s\nEpoch num: %s\nBatch size: %s\nDropout ratio: %s\n" % (
-            kernel_width, kernel_num, kernel_size_other, kernel_num_other, epoch_num, batch_size, dropout_ratio)
+        print("Start Train with Parameters:\nKernel width: %s\nKernel num: %s\nOther Kernel size: %s\nOther Kernel num: %s\nEpoch num: %s\nBatch size: %s\nDropout ratio: %s\n" % (
+            kernel_width, kernel_num, kernel_size_other, kernel_num_other, epoch_num, batch_size, dropout_ratio))
 
         channel = 1
         node_num = max_node_known
@@ -249,7 +249,7 @@ if __name__ == "__main__":
                                           type_num])
             output_test_list = convertoutput(output_test_list, class_num)
 
-            print "%d to learn" % lens
+            print("%d to learn" % lens)
 
             start = time.time()
             mean_acc = 0
@@ -320,7 +320,7 @@ if __name__ == "__main__":
                     sys.stdout.flush()
                     if abs(mean_acc - last_acc) < 0.001 and False:
                         epoch = epoch_num
-                        conveva = last_conv
+                        # conveva = last_conv
                         break
                     else:
                         last_loss = mean_loss
@@ -329,14 +329,14 @@ if __name__ == "__main__":
 
             end = time.time()
             alval.append(acc_vali)
-            print "vali loss: %f" % loss_vali
-            print "vali acc: %f" % acc_vali
-            print "Trained finished on Acc: %s, Time: %s" % (mean_acc, end - start)
+            print("vali loss: %f" % loss_vali)
+            print("vali acc: %f" % acc_vali)
+            print("Trained finished on Acc: %s, Time: %s" % (mean_acc, end - start))
             # saver.save(sess, output_dir + "/%s_kwidth_%s_Kn_%s_Kw2_%s_Kn2_%sEn_%s_Bs_%s_Dr_%s" % (
             #    ds_name, kernel_width, kernel_num, kernel_size_other, kernel_num_other, epoch_num, batch_size,
             #    dropout_ratio))
 
-            print "start to test"
+            print("start to test")
             saver.restore(sess, output_dir + "/%s_kwidth_%s_Kn_%s_Kw2_%s_Kn2_%sEn_%s_Bs_%s_Dr_%s" % (
                 ds_name, kernel_width, kernel_num, kernel_size_other, kernel_num_other, epoch_num, batch_size,
                 dropout_ratio))
@@ -373,16 +373,16 @@ if __name__ == "__main__":
             end = time.time()
             tim = end - start
             altim.append(tim)
-            print "Tested finished on Acc: %s, Time: %s" % (mean_acc, tim)
+            print("Tested finished on Acc: %s, Time: %s" % (mean_acc, tim))
             if mean_acc != 0:
                 alres.append(mean_acc)
         if len(alres) == 0:
             alres.append(0)
-        print alres
+        print(alres)
         alres = list_filter(alres)
         mean_acc = np.mean(alres)
         std_acc = np.std(alres)
         altim = list_filter(altim)
         mean_tim = np.mean(altim)
-        print "Average Acc is %s, Std is %s, Avg Time is %s.\n" % (mean_acc, std_acc, mean_tim)
-        print "done"
+        print("Average Acc is %s, Std is %s, Avg Time is %s.\n" % (mean_acc, std_acc, mean_tim))
+        print("done")
