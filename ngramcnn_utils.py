@@ -9,9 +9,15 @@ import numpy as np
 import tensorflow as tf
 import math
 import pickle
-
-from itertools_recipes import grouper
+from itertools import zip_longest
 import concurrent.futures
+
+
+# copy from itertools_receipts to compatible with python3
+def grouper(n, iterable, fillvalue=None):
+    "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
+    args = [iter(iterable)] * n
+    return zip_longest(fillvalue=fillvalue, *args)
 
 
 def go(func, data, K):  # func is the function, returns res, data is the data in nparray, K is the multi thread number
@@ -151,20 +157,20 @@ def extend(a, max_node_num):
 
 
 def load_data(ds_name, data_dir):
-    f = open(data_dir + "/%s.graph" % ds_name, "r")
-    data = pickle.load(f)
-    graph_data = data["graph"]
-    labels = data["labels"]
-    if len(labels) == 1:
-        labels = labels[0]
-    lbs = np.array(labels, dtype=np.float)
-    all_lbs = np.unique(lbs)
-    counter = 0
-    lbs2 = np.zeros((len(lbs)))
-    for al_lbs in all_lbs:
-        lbs2[np.argwhere(lbs == al_lbs)] = counter
-        counter += 1
-    return graph_data, lbs2
+    with open(data_dir + "/%s.graph.py3" % ds_name, "rb") as f:
+        data = pickle.load(f, encoding='latin1')
+        graph_data = data["graph"]
+        labels = data["labels"]
+        if len(labels) == 1:
+            labels = labels[0]
+        lbs = np.array(labels, dtype=np.float)
+        all_lbs = np.unique(lbs)
+        counter = 0
+        lbs2 = np.zeros((len(lbs)))
+        for al_lbs in all_lbs:
+            lbs2[np.argwhere(lbs == al_lbs)] = counter
+            counter += 1
+        return graph_data, lbs2
 
 
 def load_graph_simple(nodes, max_node_limit):
@@ -179,7 +185,7 @@ def load_graph_simple(nodes, max_node_limit):
     A = np.zeros((size, size), dtype=np.float32)  # A is the adjacency matrix
     for nidx in nodes:
         for neighbor in nodes[nidx]["neighbors"]:
-            if (node_list.has_key(nidx)) and (node_list.has_key(neighbor)):
+            if (nidx in node_list) and (neighbor in node_list):
                 source = node_list[nidx]
                 to = node_list[neighbor]
                 A[source, to] = 1
@@ -203,7 +209,7 @@ def evaluate(A, kernel_width, node_num):
 
 
 def exchange(A, i, j, node_num):
-    index = range(node_num)
+    index = list(range(node_num))
     index[j] = i
     index[i] = j
     new_A = np.transpose(np.transpose(A[index])[index])
@@ -251,3 +257,4 @@ def exchangemax_simple(A, kernel_width, node_num, duplicate_limit):
     if len(others) > duplicate_limit:
         others = others[0:duplicate_limit]
     return A, others
+

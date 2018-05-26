@@ -40,8 +40,8 @@ def load_data_to_list(graph_data):
         if graph_data[i] is None:
             continue
         id, graph = graph_data[i]
-        # print "pid {} doing No.{} graph, total {} graph".format(pid, i + 1, len(graph_data))
-        # print "doing %d" % (id)
+        # print("pid {} doing No.{} graph, total {} graph".format(pid, i + 1, len(graph_data)))
+        # print("doing %d" % (id))
         A = load_graph_simple(graph, max_node_limit)
         node_num = len(A)
         edge_num = sum(sum(A)) / 2
@@ -50,11 +50,16 @@ def load_data_to_list(graph_data):
             max_node_known = node_num
         A, others = exchangemax_simple(A, kernel_width, node_num, duplicate_limit)
         net_list.append((A, lbs[id], others, max_node_known, max_label_known, node_num, edge_num, degree))
-
+    print("len of net_list", len(net_list))
     return net_list
 
 
 if __name__ == "__main__":
+    # operation 1 preparing
+    sys.argv = ["", "ptc", "1", "7"]
+
+    # operation 2 training
+    sys.argv = ["", "ptc", "2", "7", "100", "20", "7", "20", "200", "0.5"]
 
     ds_name = sys.argv[1]  # dataset name
     operation = int(sys.argv[2])  # 1 means preparing , 2 means training
@@ -82,8 +87,9 @@ if __name__ == "__main__":
 
         graph_data_array = np.asarray(graph_data_list)
 
-        net_all_list = go(load_data_to_list, graph_data_array, cpu_parallel_num)
-        # net_all_list = load_data_to_list(graph_data_array)
+        # net_all_list = go(load_data_to_list, graph_data_array, cpu_parallel_num)
+        # below is sequence version, for debug
+        net_all_list = load_data_to_list(graph_data_array)
         print("graph num is %d" % (len(net_all_list)))
         all_degree = 0
         max_edge_num = 0
@@ -136,7 +142,7 @@ if __name__ == "__main__":
         print("org graph number %d" % (len(net_list)))
         print("extend graph number %d" % (len(other_list)))
         print("start writing disk")
-        with open(output_dir + "/%s_kwidth_%s" % (ds_name, kernel_width), 'w') as f:
+        with open(output_dir + "/%s_kwidth_%s" % (ds_name, kernel_width), 'wb') as f:
             pickle.dump((net_list, max_node_known, max_label_known), f)
         print("done")
 
