@@ -11,6 +11,7 @@ import math
 import pickle
 from itertools import zip_longest
 import concurrent.futures
+import json
 
 
 # copy from itertools_receipts to compatible with python3
@@ -157,13 +158,14 @@ def extend(a, max_node_num):
 
 
 def load_data(ds_name, data_dir):
-    with open(data_dir + "/%s.graph.py3" % ds_name, "rb") as f:
-        data = pickle.load(f, encoding='latin1')
+    with open(data_dir + "/" + ds_name, "r") as f:
+        data = json.load(f)
         graph_data = data["graph"]
         labels = data["labels"]
         if len(labels) == 1:
             labels = labels[0]
         lbs = np.array(labels, dtype=np.float)
+        # convert original str-type label to continuous int-type label
         all_lbs = np.unique(lbs)
         counter = 0
         lbs2 = np.zeros((len(lbs)))

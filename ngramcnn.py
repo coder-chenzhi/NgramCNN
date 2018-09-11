@@ -10,10 +10,11 @@ import numpy as np
 import sys
 import time
 import os
+from datetime import datetime
 
 import tensorflow as tf
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from ngramcnn_utils import go, list_filter, load_data, weight_variable, bias_variable, preparenel_with_vali, \
     convertoutput
 from ngramcnn_utils import load_graph_simple, exchangemax_simple
@@ -55,11 +56,11 @@ def load_data_to_list(graph_data):
 
 
 if __name__ == "__main__":
-    # operation 1 preparing
-    sys.argv = ["", "ptc", "1", "7"]
+    # operation 1 preparing for debug
+    sys.argv = ["", "CWE-119.json", "1", "7"]
 
-    # operation 2 training
-    sys.argv = ["", "ptc", "2", "7", "100", "20", "7", "20", "200", "0.5"]
+    # operation 2 training for debug
+    # sys.argv = ["", "ptc", "2", "7", "100", "20", "7", "20", "200", "0.5"]
 
     ds_name = sys.argv[1]  # dataset name
     operation = int(sys.argv[2])  # 1 means preparing , 2 means training
@@ -148,7 +149,7 @@ if __name__ == "__main__":
 
     elif operation == 2:
 
-        with open(output_dir + "/%s_kwidth_%s" % (ds_name, kernel_width), 'r') as f:
+        with open(output_dir + "/%s_kwidth_%s" % (ds_name, kernel_width), 'rb') as f:
             adj_list, max_node_known, max_label_known = pickle.load(f)
         print("load %d" % (len(adj_list)))
         batch_size = int(sys.argv[4])
@@ -270,7 +271,8 @@ if __name__ == "__main__":
 
             merged = tf.summary.merge_all()
             sess = tf.InteractiveSession()
-            train_writer = tf.summary.FileWriter('logs/summarize_train_logs/%s' % (altime), sess.graph)
+            cur_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+            train_writer = tf.summary.FileWriter('logs/summarize_train_logs/%s' % (cur_time + "/" + str(altime)), sess.graph)
             test_writer = tf.summary.FileWriter('logs/summarize_test_logs')
 
             sess.run(tf.global_variables_initializer())

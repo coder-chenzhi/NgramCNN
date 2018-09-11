@@ -83,6 +83,32 @@ In default, the GPU is required.
 Nvidia GeForce 1080 and titanX are suggested configuration.
 
 
+## Data Schema
+```json
+{
+  "graph": [
+    # graph 0
+    {
+      "0": {
+        "neighbors": [1, 2],
+        "label": (1,)
+      },
+      "1": {
+        "neighbors": [0, 2],
+        "label": (2,)
+      },
+      ...
+    },
+    # graph 1
+    {
+
+    },
+    ...
+  ],
+  "labels": [1, 0, 1, 0, ...] 
+}
+```
+You can get all graphs by key "graph" and get all corresponding labels by key "labels". The return values are both type of List with equal length. For each graph, it is a dict.
 
 ## REFERENCE
 
