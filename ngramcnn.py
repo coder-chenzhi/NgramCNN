@@ -20,7 +20,7 @@ from ngramcnn_utils import go, list_filter, load_data, weight_variable, bias_var
 from ngramcnn_utils import load_graph_simple, exchangemax_simple
 
 duplicate_limit = 0
-max_node_limit = 200
+max_node_limit = 50
 cpu_parallel_num = 8
 
 repeat_times = 1  # default is 10
@@ -58,10 +58,10 @@ def load_data_to_list(graph_data):
 
 if __name__ == "__main__":
     # operation 1 preparing for debug
-    # sys.argv = ["", "CWE-119-100-node.json", "1", "7"]
+    # sys.argv = ["", "CWE-119", "1", "7"]
 
     # operation 2 training for debug
-    sys.argv = ["", "CWE-119-100-node.json", "2", "7", "100", "20", "7", "20", "200", "0.5"]
+    sys.argv = ["", "CWE-119", "2", "7", "100", "20", "7", "20", "200", "0.5"]
 
     ds_name = sys.argv[1]  # dataset name
     operation = int(sys.argv[2])  # 1 means preparing , 2 means training
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         max_node_known = 0
 
         start = time.time()
-        graph_data, lbs = load_data(ds_name, data_dir)
+        graph_data, lbs = load_data(ds_name, data_dir, max_node_limit)
         graph_data_list = []
         for i in range(len(graph_data)):
             graph_data_list.append((i, graph_data[i]))

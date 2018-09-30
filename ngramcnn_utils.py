@@ -12,6 +12,7 @@ import pickle
 from itertools import zip_longest
 import concurrent.futures
 import json
+import os
 
 
 # copy from itertools_receipts to compatible with python3
@@ -157,13 +158,40 @@ def extend(a, max_node_num):
     return a
 
 
-def load_data(ds_name, data_dir):
-    with open(data_dir + "/" + ds_name, "r") as f:
-        data = json.load(f)
-        graph_data = data["graph"]
-        labels = data["labels"]
-        if len(labels) == 1:
-            labels = labels[0]
+def load_data(ds_name, data_dir, max_node_limit):
+    if not os.path.isdir(os.path.join(data_dir, ds_name)):
+        with open(data_dir + "/" + ds_name, "r") as f:
+            data = json.load(f)
+            graph_data = data["graph"]
+            labels = data["labels"]
+            if len(labels) == 1:
+                labels = labels[0]
+            lbs = np.array(labels, dtype=np.float)
+            # convert original str-type label to continuous int-type label
+            all_lbs = np.unique(lbs)
+            counter = 0
+            lbs2 = np.zeros((len(lbs)))
+            for al_lbs in all_lbs:
+                lbs2[np.argwhere(lbs == al_lbs)] = counter
+                counter += 1
+            return graph_data, lbs2
+    else:
+        graph_data = []
+        labels = []
+        with open(os.path.join(os.path.join(data_dir, ds_name), "@labels.json"), "r") as fp:
+            filename_to_label = json.load(fp)
+        print("About", len(os.listdir(os.path.join(data_dir, ds_name))), "files to read...")
+        for f in os.listdir(os.path.join(data_dir, ds_name)):
+            print("read", os.path.join(os.path.join(data_dir, ds_name), f))
+            if f != "@labels.json":
+                with open(os.path.join(os.path.join(data_dir, ds_name), f), "r") as fp:
+                    graph = json.load(fp)
+                    if len(graph.keys()) <= max_node_limit:
+                        graph_data.append(graph)
+                if f.replace(".json", "") in filename_to_label:
+                    labels.append(filename_to_label[f.replace(".json", "")])
+                else:
+                    labels.append("0")
         lbs = np.array(labels, dtype=np.float)
         # convert original str-type label to continuous int-type label
         all_lbs = np.unique(lbs)
@@ -172,6 +200,7 @@ def load_data(ds_name, data_dir):
         for al_lbs in all_lbs:
             lbs2[np.argwhere(lbs == al_lbs)] = counter
             counter += 1
+        print(len(graph_data), "graphs")
         return graph_data, lbs2
 
 

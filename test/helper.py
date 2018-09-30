@@ -1,6 +1,6 @@
 import os
 import json
-
+from shutil import copyfile
 
 def write_to_json(node_limit):
     label_file = "G:/Coding/java/workspace/VulnerabilityDetection/data/CWE-119/CGD/cwe119_label.txt"
@@ -85,11 +85,40 @@ def parse_joern_to_json(source_path):
                 json.dump(graph, fp)
 
 
+def restore_joern_graph(source_path, target_path):
+    for root, dirs, files in os.walk(source_path, topdown=False):
+        for f in files:
+            if f == "graph.json":
+                print("copy", os.path.join(root, f))
+                target_file_name = root.split("\\")[-2] + "@" + root.split("\\")[-1] + ".json"
+                copyfile(os.path.join(root, f), os.path.join(target_path, target_file_name))
+
+
+def joern_file_labels(origin_cgd_label, file_label):
+    filename_to_label = {}
+    with open(origin_cgd_label, "r") as f:
+        lines = f.readlines()
+        for line in lines:
+            cols = line.split(" ")
+            label = int(cols[-1])
+            filename = cols[1].split("/")[-2] + "@" + cols[1].split("/")[-1]
+            if filename in filename_to_label:
+                filename_to_label[filename] = filename_to_label[filename] | label
+            else:
+                filename_to_label[filename] = label
+
+    with open(file_label, "w") as fp:
+        json.dump(filename_to_label, fp)
+
+
 if __name__ == "__main__":
     # with open('G:/Coding/NgramCNN/kdd_datasets/CWE-119-100-node.json', 'r') as fp:
     #     data = json.load(fp)
     # summary_joern("G:\Coding\VulDeePecker\joern_parsed\CWE-399\source_files",
     #               "G:\Coding\VulDeePecker\joern_parsed\CWE-399")
-    parse_joern_to_json("G:\Coding\VulDeePecker\joern_parsed\CWE-399\source_files")
-
+    # parse_joern_to_json("G:\Coding\VulDeePecker\joern_parsed\CWE-119\source_files")
+    # restore_joern_graph("G:\Coding\VulDeePecker\joern_parsed\CWE-399\source_files",
+    #                     "G:\Coding\\NgramCNN\kdd_datasets\CWE-399")
+    joern_file_labels("G:\Coding\VulDeePecker\CWE-399\CGD\cwe399_cgd_labels.txt",
+                      "G:\Coding\\NgramCNN\kdd_datasets\CWE-399\@labels.json")
 
