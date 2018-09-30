@@ -108,7 +108,12 @@ Nvidia GeForce 1080 and titanX are suggested configuration.
   "labels": [1, 0, 1, 0, ...] 
 }
 ```
-You can get all graphs by key "graph" and get all corresponding labels by key "labels". The return values are both type of List with equal length. For each graph, it is a dict.
+
+You can get all graphs by key "graph" and get all corresponding labels by key "labels".
+The return values are both list with equal length.
+For each graph, it is a dict. The keys of this dict are ids of node (could be any string).
+The values of the dict are another dict, which has two keys.
+One is "neighbors", whose value is a list of node ides. The other is 'label', whose value is a tuple.
 
 ## REFERENCE
 

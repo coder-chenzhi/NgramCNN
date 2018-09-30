@@ -37,6 +37,7 @@ def load_data_to_list(graph_data):
     max_node_known = 0
     net_list = []
     pid = os.getpid()
+    # for each graph
     for i in range(len(graph_data)):
         if graph_data[i] is None:
             continue
@@ -57,10 +58,10 @@ def load_data_to_list(graph_data):
 
 if __name__ == "__main__":
     # operation 1 preparing for debug
-    sys.argv = ["", "CWE-119.json", "1", "7"]
+    # sys.argv = ["", "CWE-119-100-node.json", "1", "7"]
 
     # operation 2 training for debug
-    # sys.argv = ["", "ptc", "2", "7", "100", "20", "7", "20", "200", "0.5"]
+    sys.argv = ["", "CWE-119-100-node.json", "2", "7", "100", "20", "7", "20", "200", "0.5"]
 
     ds_name = sys.argv[1]  # dataset name
     operation = int(sys.argv[2])  # 1 means preparing , 2 means training
